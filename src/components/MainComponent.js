@@ -2,15 +2,14 @@ import React, { Component } from 'react';
 import Header from './HeaderComponent';
 import RideRequest from './RideRequestForm'
 import Footer from './FooterComponent';
-import { Switch, Route, Redirect, withRouter, Link } from 'react-router-dom';
+import { Switch, Route, withRouter, Link } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { loginUser, logoutUser, googleLogin, signupUser, findRide, postRide } from '../redux/ActionCreators';
-import { autoRide } from '../redux/autoRide/autoRideActions'
+import { loginUser, logoutUser, googleLogin, signupUser, findRide, postRide, autoRide } from '../redux/ActionCreators';
 //import { actions } from 'react-redux-form';
 //import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import FindRide from './FindRide';
 import PostRide from './PostRide';
-import { Button } from 'reactstrap';
+import RideForms from './RideForms';
 
 
 const mapStateToProps = state => {
@@ -41,19 +40,8 @@ class Main extends Component {
   componentWillUnmount() {
     this.props.logoutUser();
   }
-
+  
   render() {
-
-    const PrivateRoute = ({ component: Component, ...rest }) => (
-      <Route {...rest} render={(props) => (
-        this.props.auth.isAuthenticated
-          ? <Component {...props} />
-          : <Redirect to={{
-              pathname: '/postride',
-              state: { from: props.location }
-            }} />
-      )} />
-    );
 
     return (
       <div>
@@ -62,14 +50,18 @@ class Main extends Component {
           loginUser={this.props.loginUser} 
           logoutUser={this.props.logoutUser}
           googleLogin={this.props.googleLogin}
-          />   
-          <FindRide rides={this.props.rides} findRide={this.props.findRide} />
+          /> 
+
+        <RideForms/>  
           
-           <PostRide postRide={this.props.postRide}/>
-           <RideRequest autoRide={this.props.autoRide} autoRideRequest={this.props.autoRideRequest}/>
           
-          <Footer />
-        
+        <Switch>
+          <Route path="/findride" component={()=><FindRide rides={this.props.rides} findRide={this.props.findRide} />} />
+          <Route path="/postride" component={()=><PostRide postRide={this.props.postRide}/>} />
+          <Route path="/requestride" component={()=><RideRequest autoRide={this.props.autoRide} autoRideRequest={this.props.autoRideRequest}/>} />
+        </Switch>
+
+        <Footer />
       </div>
     );
   }
